@@ -63,7 +63,7 @@ export default function Home() {
       </section>
 
       <section>
-        <h3 className="page-title">Featured</h3>
+        <h3 className="page-title">High rated</h3>
         {loading ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
             {Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} />)}
