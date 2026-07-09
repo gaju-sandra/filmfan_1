@@ -47,23 +47,20 @@ export default function Home() {
         {loading || !heroes.length ? (
           <div className="carousel-slide" style={{ background: '#6366f1' }} />
         ) : (
-          heroes.map((m, i) => (
-            <Link
-              key={m.id}
-              to={`/movie/${m.id}`}
-              className={`carousel-slide${i === slide ? ' active' : ''}`}
-              style={{
-                backgroundImage: m.backdrop_path
-                  ? `url(https://image.tmdb.org/t/p/w1280${m.backdrop_path})`
-                  : undefined,
-              }}
-            >
-              <div className="carousel-overlay">
-                <h2>{m.title}</h2>
-                <p>{m.overview?.slice(0, 120)}{m.overview?.length > 120 ? '…' : ''}</p>
-              </div>
-            </Link>
-          ))
+          <Link
+            to={`/movie/${heroes[slide].id}`}
+            className="carousel-slide active"
+            style={{
+              backgroundImage: heroes[slide].backdrop_path
+                ? `url(https://image.tmdb.org/t/p/w1280${heroes[slide].backdrop_path})`
+                : undefined,
+            }}
+          >
+            <div className="carousel-overlay">
+              <h2>{heroes[slide].title}</h2>
+              <p>{heroes[slide].overview?.slice(0, 120)}{heroes[slide].overview?.length > 120 ? '…' : ''}</p>
+            </div>
+          </Link>
         )}
         <div className="carousel-dots">
           {heroes.map((_, i) => (
