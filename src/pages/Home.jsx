@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import tmdb from '../services/tmdb.js'
 import MovieCard from '../components/MovieCard.jsx'
@@ -6,15 +6,24 @@ import SkeletonCard from '../components/SkeletonCard.jsx'
 
 export default function Home() {
   const [trending, setTrending] = useState([])
+  const [topRated, setTopRated] = useState([])
+  const [series, setSeries] = useState([])
+  const [anime, setAnime] = useState([])
   const [loading, setLoading] = useState(true)
   const [slide, setSlide] = useState(0)
 
   useEffect(() => {
-    tmdb
-      .getTrending()
-      .then((data) => setTrending(data.results || []))
-      .catch(() => setTrending([]))
-      .finally(() => setLoading(false))
+    Promise.all([
+      tmdb.getTrending(),
+      tmdb.getTopRated(),
+      tmdb.getPopularSeries(),
+      tmdb.getAnime(),
+    ]).then(([t, r, s, a]) => {
+      setTrending(t.results || [])
+      setTopRated(r.results || [])
+      setSeries(s.results || [])
+      setAnime(a.results || [])
+    }).finally(() => setLoading(false))
   }, [])
 
   const heroes = trending.slice(0, 5)
@@ -25,7 +34,12 @@ export default function Home() {
     return () => clearInterval(t)
   }, [heroes.length])
 
-  const featured = trending.slice(0, 4)
+  const sections = [
+    { title: 'Trending This Week', data: trending },
+    { title: 'High Rated', data: topRated },
+    { title: 'Popular Series', data: series },
+    { title: 'Anime', data: anime },
+  ]
 
   return (
     <div className="space-y-8">
@@ -62,31 +76,20 @@ export default function Home() {
         </div>
       </section>
 
-      <section>
-        <h3 className="page-title">High rated</h3>
-        {loading ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-            {Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} />)}
-          </div>
-        ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-            {featured.map((movie) => <MovieCard key={movie.id} movie={movie} />)}
-          </div>
-        )}
-      </section>
-
-      <section>
-        <h3 className="page-title">Trending This Week</h3>
-        {loading ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-            {Array.from({ length: 8 }).map((_, i) => <SkeletonCard key={i} />)}
-          </div>
-        ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-            {trending.map((movie) => <MovieCard key={movie.id} movie={movie} />)}
-          </div>
-        )}
-      </section>
+      {sections.map(({ title, data }) => (
+        <section key={title}>
+          <h3 className="page-title">{title}</h3>
+          {loading ? (
+            <div className="grid">
+              {Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} />)}
+            </div>
+          ) : (
+            <div className="grid">
+              {data.map((item) => <MovieCard key={item.id} movie={item} />)}
+            </div>
+          )}
+        </section>
+      ))}
     </div>
   )
 }
