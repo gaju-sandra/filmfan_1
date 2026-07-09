@@ -24,55 +24,94 @@
 
 /* Sidebar */
 .sidebar {
-  width: 200px;
+  width: 240px;
   flex-shrink: 0;
   background: white;
-  border-radius: 16px;
-  padding: 16px 12px;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
-  position: sticky;
-  top: 90px;
+  border-radius: 0;
+  padding: 20px 0;
+  box-shadow: 2px 0 12px rgba(0,0,0,0.12);
+  position: fixed;
+  top: 65px;
+  left: 0;
+  height: calc(100vh - 65px);
+  z-index: 200;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+  overflow-y: auto;
+  border-right: 1px solid #e5e7eb;
+}
+
+.sidebar.sidebar-open {
+  transform: translateX(0);
+}
+
+.sidebar-backdrop {
+  position: fixed;
+  top: 65px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 199;
+}
+
+.menu-btn {
+  background: none;
+  border: none;
+  font-size: 1.3rem;
+  cursor: pointer;
+  padding: 0 8px 0 0;
+  color: inherit;
+  line-height: 1;
 }
 
 .sidebar-heading {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   color: #9ca3af;
-  padding: 0 8px;
-  margin: 0 0 8px;
+  padding: 0 20px;
+  margin: 0 0 6px;
 }
 
 .sidebar-item {
   display: block;
   width: 100%;
   text-align: left;
-  padding: 10px 12px;
+  padding: 11px 20px;
   border: none;
+  border-left: 3px solid transparent;
   background: none;
-  border-radius: 10px;
+  border-radius: 0;
   cursor: pointer;
   font-size: 0.92rem;
   font-weight: 500;
   color: #374151;
   text-decoration: none;
-  transition: background 0.2s, color 0.2s;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
 }
 
 .sidebar-item:hover {
   background: #fef9c3;
   color: #92400e;
+  border-left-color: #fcd34d;
 }
 
 .sidebar-item.active {
-  background: #fef08a;
+  background: #fef9c3;
   color: #92400e;
   font-weight: 700;
+  border-left-color: #f59e0b;
 }
 
 html.dark .sidebar {
-  background: #111827;
+  background: #0f172a;
+  border-right-color: #1f2937;
+}
+
+html.dark .menu-btn {
+  color: #e2e8f0;
 }
 
 html.dark .sidebar-item {
@@ -157,6 +196,12 @@ html.dark .page-btn.active {
   align-items: center;
   justify-content: space-between;
   gap: 14px;
+}
+
+.brand-wrap {
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .brand {
@@ -604,23 +649,38 @@ html.dark .star.active {
 .dp-page {
   display: flex;
   flex-direction: column;
-  gap: 0;
+  gap: 28px;
 }
 
+/* Trailer + info side by side */
+.dp-top-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+@media (max-width: 768px) {
+  .dp-top-row { grid-template-columns: 1fr; }
+}
+
+/* Smaller trailer box */
 .dp-hero {
   position: relative;
   width: 100%;
-  aspect-ratio: 16 / 7;
+  aspect-ratio: 16 / 9;
   background: #000;
-  border-radius: 20px;
+  border-radius: 14px;
   overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.18);
 }
 
-.dp-trailer {
+.dp-hero-iframe {
   width: 100%;
   height: 100%;
   border: none;
   display: block;
+  pointer-events: none;
 }
 
 .dp-no-trailer {
@@ -628,62 +688,115 @@ html.dark .star.active {
   background-position: center;
 }
 
-.dp-hero-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.2) 60%, transparent 100%);
+/* Info column */
+.dp-info {
   display: flex;
-  align-items: flex-end;
-  pointer-events: none;
-}
-
-.dp-hero-content {
-  padding: 28px 32px;
-  pointer-events: all;
-  width: 100%;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
 }
 
 .dp-title {
-  font-size: clamp(1.4rem, 3vw, 2.4rem);
-  color: white;
-  margin: 0 0 8px;
+  font-size: clamp(1.4rem, 2.5vw, 2rem);
+  font-weight: 800;
+  color: #111827;
+  margin: 0;
+  line-height: 1.2;
 }
 
 .dp-meta {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 10px;
+  gap: 6px;
 }
 
 .dp-meta span {
-  background: rgba(255,255,255,0.15);
-  color: white;
+  background: #e0e7ff;
+  color: #3730a3;
   padding: 3px 10px;
   border-radius: 20px;
-  font-size: 0.82rem;
+  font-size: 0.8rem;
+  font-weight: 500;
 }
 
 .dp-overview {
-  color: rgba(255,255,255,0.85);
-  font-size: 0.95rem;
-  max-width: 680px;
-  margin: 0 0 16px;
-  line-height: 1.6;
+  color: #4b5563;
+  font-size: 0.92rem;
+  line-height: 1.65;
+  margin: 0;
+}
+
+.dp-ratings-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+}
+
+.dp-avg-block {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dp-avg-rating {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.dp-vote-count {
+  color: #6b7280;
+  font-size: 0.8rem;
+}
+
+.dp-user-rating {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.dp-rate-label {
+  color: #6b7280;
+  font-size: 0.85rem;
+}
+
+.dp-stars {
+  display: flex;
+  gap: 1px;
+}
+
+.dp-star {
+  background: none;
+  border: none;
+  font-size: 1.3rem;
+  cursor: pointer;
+  color: #d1d5db;
+  padding: 0;
+  transition: color 0.12s;
+  line-height: 1;
+}
+
+.dp-star.active { color: #f59e0b; }
+
+.dp-rating-msg {
+  font-size: 0.82rem;
+  color: #16a34a;
 }
 
 .dp-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 8px;
 }
 
 .dp-btn {
-  padding: 10px 20px;
+  padding: 9px 18px;
   border-radius: 10px;
   border: none;
   cursor: pointer;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   font-weight: 600;
   text-decoration: none;
   display: inline-flex;
@@ -694,78 +807,34 @@ html.dark .star.active {
 
 .dp-btn:hover { opacity: 0.85; }
 
-.dp-btn-primary {
-  background: #2563eb;
-  color: white;
+.dp-btn-primary { background: #2563eb; color: white; }
+.dp-btn-fav-active { background: #ef4444; color: white; }
+
+.dp-btn-outline-solid {
+  background: #f3f4f6;
+  color: #374151;
+  border: 1px solid #d1d5db;
 }
 
-.dp-btn-outline {
-  background: rgba(255,255,255,0.15);
-  color: white;
-  border: 1px solid rgba(255,255,255,0.3);
-  backdrop-filter: blur(4px);
-}
-
-.dp-btn-fav-active {
-  background: #ef4444;
-  color: white;
-}
-
-.dp-infobar {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  background: white;
-  border-radius: 16px;
-  padding: 16px 24px;
-  margin-top: 16px;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.07);
-}
-
-.dp-rating-block {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.dp-avg-rating {
-  font-size: 1.4rem;
-  font-weight: 700;
-}
-
-.dp-vote-count {
-  color: #6b7280;
-  font-size: 0.85rem;
-}
-
-.dp-user-rating {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-  font-size: 0.9rem;
-}
-
+/* Tabs */
 .dp-tabs {
   display: flex;
   gap: 4px;
-  margin-top: 24px;
   border-bottom: 2px solid #e5e7eb;
+  margin-bottom: 20px;
 }
 
 .dp-tab {
-  padding: 10px 20px;
+  padding: 10px 22px;
   border: none;
   background: none;
   cursor: pointer;
   font-size: 0.95rem;
-  font-weight: 500;
+  font-weight: 600;
   color: #6b7280;
   border-bottom: 2px solid transparent;
   margin-bottom: -2px;
-  transition: color 0.2s;
+  transition: color 0.15s, border-color 0.15s;
 }
 
 .dp-tab.active {
@@ -773,32 +842,27 @@ html.dark .star.active {
   border-bottom-color: #2563eb;
 }
 
-.dp-tab-content {
-  padding: 24px 0;
+.dp-section {
+  display: flex;
+  flex-direction: column;
 }
 
-html.dark .dp-infobar {
-  background: #111827;
-}
+/* Dark mode */
+html.dark .dp-title { color: #e2e8f0; }
+html.dark .dp-meta span { background: #1e1b4b; color: #a5b4fc; }
+html.dark .dp-overview { color: #94a3b8; }
+html.dark .dp-avg-rating { color: #e2e8f0; }
+html.dark .dp-vote-count { color: #94a3b8; }
+html.dark .dp-rate-label { color: #94a3b8; }
+html.dark .dp-star { color: #374151; }
+html.dark .dp-star.active { color: #f59e0b; }
+html.dark .dp-btn-outline-solid { background: #1f2937; color: #e2e8f0; border-color: #374151; }
+html.dark .dp-tabs { border-bottom-color: #1f2937; }
+html.dark .dp-tab { color: #94a3b8; }
+html.dark .dp-tab.active { color: #818cf8; border-bottom-color: #818cf8; }
 
-html.dark .dp-vote-count {
-  color: #94a3b8;
-}
 
-html.dark .dp-tabs {
-  border-bottom-color: #1f2937;
-}
 
-html.dark .dp-tab {
-  color: #94a3b8;
-}
-
-html.dark .dp-tab.active {
-  color: #818cf8;
-  border-bottom-color: #818cf8;
-}
-
-/* Cast */
 .cast-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));

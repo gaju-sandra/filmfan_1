@@ -1,10 +1,10 @@
 import './App.css'
-import { Routes, Route, useLocation } from 'react-router-dom'
+import { Routes, Route } from 'react-router-dom'
+import { useState } from 'react'
 import Home from './pages/Home.jsx'
 import MovieDetails from './pages/MovieDetails.jsx'
 import Favourites from './pages/Favourites.jsx'
 import Genres from './pages/Genres.jsx'
-import About from './pages/About.jsx'
 import Header from './components/Header.jsx'
 import Sidebar from './components/Sidebar.jsx'
 import BrowsePage from './components/BrowsePage.jsx'
@@ -20,18 +20,15 @@ const BROWSE_ROUTES = [
   { path: '/coming-soon',  title: 'Coming Soon',     fetchFn: (p) => tmdb.getUpcoming(p) },
 ]
 
-const SIDEBAR_PATHS = ['/', '/top-rated', '/series', '/anime', '/tv-shows', '/live', '/coming-soon']
-
 function App() {
-  const location = useLocation()
-  const showSidebar = SIDEBAR_PATHS.includes(location.pathname)
+  const [sidebarOpen, setSidebarOpen] = useState(false)
 
   return (
     <div className="app-shell">
-      <Header />
+      <Header onMenuClick={() => setSidebarOpen((v) => !v)} />
+      <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       <div className="app-body">
-        {showSidebar && <Sidebar />}
-        <main className={`app-main${showSidebar ? ' with-sidebar' : ''}`}>
+        <main className="app-main">
           <Routes>
             <Route path="/" element={<Home />} />
             {BROWSE_ROUTES.map(({ path, title, fetchFn }) => (
@@ -44,7 +41,6 @@ function App() {
             <Route path="/movie/:id" element={<MovieDetails />} />
             <Route path="/favourites" element={<Favourites />} />
             <Route path="/genres" element={<Genres />} />
-            <Route path="/about" element={<About />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </main>

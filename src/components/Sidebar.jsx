@@ -10,20 +10,24 @@ const BROWSE = [
   { to: '/coming-soon', label: 'Coming Soon' },
 ]
 
-export default function Sidebar() {
+export default function Sidebar({ open, onClose }) {
   return (
-    <aside className="sidebar">
-      <p className="sidebar-heading">Browse</p>
-      {BROWSE.map(({ to, label }) => (
-        <NavLink
-          key={to}
-          to={to}
-          end={to === '/'}
-          className={({ isActive }) => `sidebar-item${isActive ? ' active' : ''}`}
-        >
-          {label}
-        </NavLink>
-      ))}
-    </aside>
+    <>
+      {open && <div className="sidebar-backdrop" onClick={onClose} />}
+      <aside className={`sidebar${open ? ' sidebar-open' : ''}`}>
+        <p className="sidebar-heading">Browse</p>
+        {BROWSE.map(({ to, label }) => (
+          <NavLink
+            key={to}
+            to={to}
+            end={to === '/'}
+            className={({ isActive }) => `sidebar-item${isActive ? ' active' : ''}`}
+            onClick={onClose}
+          >
+            {label}
+          </NavLink>
+        ))}
+      </aside>
+    </>
   )
 }

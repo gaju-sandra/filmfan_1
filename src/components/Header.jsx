@@ -6,10 +6,9 @@ const NAV_LINKS = [
   { to: '/', label: 'Discover', icon: null },
   { to: '/genres', label: 'Genres', icon: null },
   { to: '/favourites', label: 'Favourites', icon: null },
-  { to: '/about', label: 'About', icon: null },
 ]
 
-export default function Header() {
+export default function Header({ onMenuClick }) {
   const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'light')
   const [q, setQ] = useState('')
   const [results, setResults] = useState([])
@@ -40,7 +39,10 @@ export default function Header() {
   return (
     <header className="app-header">
       <div className="header-inner">
-        <Link to="/" className="brand">Film Fan</Link>
+        <div className="brand-wrap">
+          <button className="menu-btn" onClick={onMenuClick}>☰</button>
+          <Link to="/" className="brand">Film Fan</Link>
+        </div>
 
         <nav className="header-nav">
           {NAV_LINKS.map(({ to, label, icon }) => (
@@ -95,7 +97,7 @@ export default function Header() {
             onClick={() => setTheme((t) => (t === 'dark' ? 'light' : 'dark'))}
             className="theme-button"
           >
-            {theme === 'dark' ? '☀️' : '🌙'}
+            {theme === 'dark' ? '☀️  dark ' : '🌙 light'}
           </button>
         </div>
       </div>
