@@ -1,13 +1,16 @@
 import { useEffect, useState, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import tmdb from '../services/tmdb.js'
+import { useFavourites } from '../context/FavouritesContext.jsx'
 
 export default function Header() {
   const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'light')
   const [q, setQ] = useState('')
   const [results, setResults] = useState([])
   const [searching, setSearching] = useState(false)
+  const [showFavs, setShowFavs] = useState(false)
   const debounceRef = useRef(null)
+  const { favourites, toggle } = useFavourites()
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', theme === 'dark')
@@ -68,6 +71,42 @@ export default function Header() {
                     </span>
                   </Link>
                 ))}
+              </div>
+            )}
+          </div>
+          <div className="fav-wrap">
+            <button className="theme-button" onClick={() => setShowFavs((v) => !v)}>
+              ❤️ {favourites.length > 0 && <span className="fav-count">{favourites.length}</span>}
+            </button>
+            {showFavs && (
+              <div className="search-dropdown fav-dropdown">
+                {favourites.length === 0 ? (
+                  <div className="search-drop-item">No favourites yet</div>
+                ) : (
+                  favourites.map((m) => (
+                    <Link
+                      key={m.id}
+                      to={`/movie/${m.id}`}
+                      className="search-drop-link"
+                      onClick={() => setShowFavs(false)}
+                    >
+                      <img
+                        src={m.poster_path
+                          ? `https://image.tmdb.org/t/p/w92${m.poster_path}`
+                          : 'https://placehold.co/46x68?text=N/A'}
+                        alt={m.title || m.name}
+                        className="search-drop-poster"
+                      />
+                      <span>
+                        <strong>{m.title || m.name}</strong>
+                        <button
+                          className="fav-remove"
+                          onClick={(e) => { e.preventDefault(); toggle(m) }}
+                        >Remove</button>
+                      </span>
+                    </Link>
+                  ))
+                )}
               </div>
             )}
           </div>
