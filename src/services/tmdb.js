@@ -12,11 +12,16 @@ const client = axios.create({
 })
 
 export default {
-  getNowPlaying: () => client.get('/movie/now_playing').then((r) => r.data),
-  getTrending: () => client.get('/trending/movie/week').then((r) => r.data),
-  getTopRated: () => client.get('/movie/top_rated').then((r) => r.data),
-  getPopularSeries: () => client.get('/trending/tv/week').then((r) => r.data),
-  getAnime: () => client.get('/discover/movie', { params: { with_genres: 16, with_origin_country: 'JP' } }).then((r) => r.data),
+  getNowPlaying: (page = 1) => client.get('/movie/now_playing', { params: { page } }).then((r) => r.data),
+  getTrending: (page = 1) => client.get('/trending/movie/week', { params: { page } }).then((r) => r.data),
+  getTopRated: (page = 1) => client.get('/movie/top_rated', { params: { page } }).then((r) => r.data),
+  getPopularSeries: (page = 1) => client.get('/trending/tv/week', { params: { page } }).then((r) => r.data),
+  getAnime: (page = 1) => client.get('/discover/movie', { params: { with_genres: 16, with_origin_country: 'JP', page } }).then((r) => r.data),
+  getTvShows: (page = 1) => client.get('/tv/popular', { params: { page } }).then((r) => r.data),
+  getUpcoming: (page = 1) => client.get('/movie/upcoming', { params: { page } }).then((r) => {
+    const today = new Date().toISOString().slice(0, 10)
+    return { ...r.data, results: (r.data.results || []).filter((m) => m.release_date > today) }
+  }),
   getByGenre: (genreId) => client.get('/discover/movie', { params: { with_genres: genreId, sort_by: 'popularity.desc' } }).then((r) => r.data),
   searchMovies: (q) => client.get('/search/movie', { params: { query: q } }).then((r) => r.data),
   getMovieDetails: (id) => client.get(`/movie/${id}`, { params: { append_to_response: 'videos,credits' } }).then((r) => r.data),

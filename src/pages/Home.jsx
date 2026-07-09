@@ -1,29 +1,14 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import tmdb from '../services/tmdb.js'
-import MovieCard from '../components/MovieCard.jsx'
-import SkeletonCard from '../components/SkeletonCard.jsx'
+import BrowsePage from '../components/BrowsePage.jsx'
 
 export default function Home() {
   const [trending, setTrending] = useState([])
-  const [topRated, setTopRated] = useState([])
-  const [series, setSeries] = useState([])
-  const [anime, setAnime] = useState([])
-  const [loading, setLoading] = useState(true)
   const [slide, setSlide] = useState(0)
 
   useEffect(() => {
-    Promise.all([
-      tmdb.getTrending(),
-      tmdb.getTopRated(),
-      tmdb.getPopularSeries(),
-      tmdb.getAnime(),
-    ]).then(([t, r, s, a]) => {
-      setTrending(t.results || [])
-      setTopRated(r.results || [])
-      setSeries(s.results || [])
-      setAnime(a.results || [])
-    }).finally(() => setLoading(false))
+    tmdb.getTrending().then((d) => setTrending(d.results || []))
   }, [])
 
   const heroes = trending.slice(0, 5)
@@ -34,17 +19,10 @@ export default function Home() {
     return () => clearInterval(t)
   }, [heroes.length])
 
-  const sections = [
-    { title: 'Trending This Week', data: trending },
-    { title: 'High Rated', data: topRated },
-    { title: 'Popular Series', data: series },
-    { title: 'Anime', data: anime },
-  ]
-
   return (
     <div className="space-y-8">
       <section className="carousel">
-        {loading || !heroes.length ? (
+        {!heroes.length ? (
           <div className="carousel-slide" style={{ background: '#6366f1' }} />
         ) : (
           <Link
@@ -73,20 +51,7 @@ export default function Home() {
         </div>
       </section>
 
-      {sections.map(({ title, data }) => (
-        <section key={title}>
-          <h3 className="page-title">{title}</h3>
-          {loading ? (
-            <div className="grid">
-              {Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} />)}
-            </div>
-          ) : (
-            <div className="grid">
-              {data.map((item) => <MovieCard key={item.id} movie={item} />)}
-            </div>
-          )}
-        </section>
-      ))}
+      <BrowsePage title="Trending This Week" fetchFn={(p) => tmdb.getTrending(p)} />
     </div>
   )
 }
