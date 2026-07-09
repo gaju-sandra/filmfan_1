@@ -139,7 +139,7 @@ html.dark .sidebar-item.active {
   display: flex;
   gap: 8px;
   justify-content: center;
-  margin-top: 32px;
+  margin-top: 16px;
 }
 
 .page-btn {

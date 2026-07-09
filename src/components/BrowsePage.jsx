@@ -1,19 +1,23 @@
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState } from 'react'
 import MovieCard from './MovieCard.jsx'
 import SkeletonCard from './SkeletonCard.jsx'
 
-const PER_PAGE = 8
+const PER_PAGE = 10
 const MAX_PAGES = 4
 
 export default function BrowsePage({ title, fetchFn }) {
   const [movies, setMovies] = useState([])
   const [loading, setLoading] = useState(true)
   const [page, setPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(MAX_PAGES)
 
   useEffect(() => {
     setLoading(true)
     fetchFn(page)
-      .then((d) => setMovies(d.results || []))
+      .then((d) => {
+        setMovies(d.results || [])
+        setTotalPages(Math.min(d.total_pages || MAX_PAGES, MAX_PAGES))
+      })
       .finally(() => setLoading(false))
   }, [page, title])
 
@@ -23,7 +27,7 @@ export default function BrowsePage({ title, fetchFn }) {
   }
 
   return (
-    <div>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
       <h2 className="page-title">{title}</h2>
       {loading ? (
         <div className="grid">
@@ -35,7 +39,7 @@ export default function BrowsePage({ title, fetchFn }) {
         </div>
       )}
       <div className="pagination">
-        {Array.from({ length: MAX_PAGES }).map((_, i) => (
+        {Array.from({ length: totalPages }).map((_, i) => (
           <button
             key={i}
             className={`page-btn${page === i + 1 ? ' active' : ''}`}
