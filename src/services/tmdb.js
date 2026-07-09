@@ -17,6 +17,7 @@ export default {
   getTopRated: () => client.get('/movie/top_rated').then((r) => r.data),
   getPopularSeries: () => client.get('/trending/tv/week').then((r) => r.data),
   getAnime: () => client.get('/discover/movie', { params: { with_genres: 16, with_origin_country: 'JP' } }).then((r) => r.data),
+  getByGenre: (genreId) => client.get('/discover/movie', { params: { with_genres: genreId, sort_by: 'popularity.desc' } }).then((r) => r.data),
   searchMovies: (q) => client.get('/search/movie', { params: { query: q } }).then((r) => r.data),
   getMovieDetails: (id) => client.get(`/movie/${id}`, { params: { append_to_response: 'videos,credits' } }).then((r) => r.data),
   getRecommendations: (id) => client.get(`/movie/${id}/recommendations`).then((r) => r.data),

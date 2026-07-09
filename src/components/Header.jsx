@@ -1,16 +1,20 @@
 import { useEffect, useState, useRef } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, NavLink, useNavigate } from 'react-router-dom'
 import tmdb from '../services/tmdb.js'
-import { useFavourites } from '../context/FavouritesContext.jsx'
+
+const NAV_LINKS = [
+  { to: '/', label: 'Discover', icon: null },
+  { to: '/genres', label: 'Genres', icon: null },
+  { to: '/favourites', label: 'Favourites', icon: null },
+  { to: '/about', label: 'About', icon: null },
+]
 
 export default function Header() {
   const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'light')
   const [q, setQ] = useState('')
   const [results, setResults] = useState([])
   const [searching, setSearching] = useState(false)
-  const [showFavs, setShowFavs] = useState(false)
   const debounceRef = useRef(null)
-  const { favourites, toggle } = useFavourites()
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', theme === 'dark')
@@ -36,9 +40,21 @@ export default function Header() {
   return (
     <header className="app-header">
       <div className="header-inner">
-        <Link to="/" className="brand">
-          Film Fan
-        </Link>
+        <Link to="/" className="brand">Film Fan</Link>
+
+        <nav className="header-nav">
+          {NAV_LINKS.map(({ to, label, icon }) => (
+            <NavLink
+              key={to}
+              to={to}
+              end={to === '/'}
+              className={({ isActive }) => `nav-pill${isActive ? ' nav-pill-active' : ''}`}
+            >
+              {icon && <span>{icon}</span>}{label}
+            </NavLink>
+          ))}
+        </nav>
+
         <div className="header-actions">
           <div className="header-search-wrap">
             <input
@@ -71,42 +87,6 @@ export default function Header() {
                     </span>
                   </Link>
                 ))}
-              </div>
-            )}
-          </div>
-          <div className="fav-wrap">
-            <button className="theme-button" onClick={() => setShowFavs((v) => !v)}>
-              ❤️ {favourites.length > 0 && <span className="fav-count">{favourites.length}</span>}
-            </button>
-            {showFavs && (
-              <div className="search-dropdown fav-dropdown">
-                {favourites.length === 0 ? (
-                  <div className="search-drop-item">No favourites yet</div>
-                ) : (
-                  favourites.map((m) => (
-                    <Link
-                      key={m.id}
-                      to={`/movie/${m.id}`}
-                      className="search-drop-link"
-                      onClick={() => setShowFavs(false)}
-                    >
-                      <img
-                        src={m.poster_path
-                          ? `https://image.tmdb.org/t/p/w92${m.poster_path}`
-                          : 'https://placehold.co/46x68?text=N/A'}
-                        alt={m.title || m.name}
-                        className="search-drop-poster"
-                      />
-                      <span>
-                        <strong>{m.title || m.name}</strong>
-                        <button
-                          className="fav-remove"
-                          onClick={(e) => { e.preventDefault(); toggle(m) }}
-                        >Remove</button>
-                      </span>
-                    </Link>
-                  ))
-                )}
               </div>
             )}
           </div>
