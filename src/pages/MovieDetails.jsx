@@ -14,6 +14,8 @@ export default function MovieDetails() {
   const [hovered, setHovered] = useState(0)
   const [ratingMsg, setRatingMsg] = useState('')
   const [activeTab, setActiveTab] = useState('cast')
+  const [displayAvg, setDisplayAvg] = useState(null)
+  const [displayCount, setDisplayCount] = useState(null)
 
   const getGuestSession = async () => {
     let sid = localStorage.getItem('guest_session_id')
@@ -30,6 +32,12 @@ export default function MovieDetails() {
     try {
       const sid = await getGuestSession()
       await tmdb.rateMovie(id, star, sid)
+      setDisplayAvg((prev) => {
+        const count = displayCount ?? movie?.vote_count ?? 0
+        const avg = prev ?? movie?.vote_average ?? 0
+        return (avg * count + star) / (count + 1)
+      })
+      setDisplayCount((prev) => (prev ?? movie?.vote_count ?? 0) + 1)
       setRatingMsg('Rating submitted!')
     } catch {
       setRatingMsg('Failed to submit rating.')
@@ -41,6 +49,8 @@ export default function MovieDetails() {
     setLoading(true)
     setUserRating(0)
     setActiveTab('cast')
+    setDisplayAvg(null)
+    setDisplayCount(null)
     Promise.all([
       tmdb.getMovieDetails(id),
       tmdb.getRecommendations(id),
@@ -62,14 +72,14 @@ export default function MovieDetails() {
   const year = movie.release_date?.slice(0, 4)
   const country = movie.production_countries?.[0]?.name
   const shareUrl = window.location.href
+  const voteAvg = displayAvg ?? movie.vote_average
+  const voteCount = displayCount ?? movie.vote_count
 
   return (
     <div className="dp-page">
 
-      {/* Trailer + Info side by side */}
       <div className="dp-top-row">
 
-        {/* Smaller trailer box */}
         <div className="dp-hero">
           {trailer ? (
             <iframe
@@ -91,7 +101,6 @@ export default function MovieDetails() {
           )}
         </div>
 
-        {/* Movie info */}
         <div className="dp-info">
           <h1 className="dp-title">{movie.title}</h1>
 
@@ -106,8 +115,8 @@ export default function MovieDetails() {
 
           <div className="dp-ratings-row">
             <div className="dp-avg-block">
-              <span className="dp-avg-rating">⭐ {movie.vote_average?.toFixed(1)}</span>
-              <span className="dp-vote-count">{movie.vote_count?.toLocaleString()} ratings</span>
+              <span className="dp-avg-rating">⭐ {voteAvg?.toFixed(1)}</span>
+              <span className="dp-vote-count">{voteCount?.toLocaleString()} ratings</span>
             </div>
             <div className="dp-user-rating">
               <span className="dp-rate-label">Rate:</span>
