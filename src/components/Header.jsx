@@ -52,10 +52,20 @@ export default function Header() {
                   <Link
                     key={m.id}
                     to={`/movie/${m.id}`}
-                    className="search-drop-item search-drop-link"
+                    className="search-drop-link"
                     onClick={() => { setQ(''); setResults([]) }}
                   >
-                    {m.title} {m.release_date ? `(${m.release_date.slice(0,4)})` : ''}
+                    <img
+                      src={m.poster_path
+                        ? `https://image.tmdb.org/t/p/w92${m.poster_path}`
+                        : 'https://placehold.co/46x68?text=N/A'}
+                      alt={m.title}
+                      className="search-drop-poster"
+                    />
+                    <span>
+                      <strong>{m.title}</strong>
+                      {m.release_date && <small>{m.release_date.slice(0, 4)}</small>}
+                    </span>
                   </Link>
                 ))}
               </div>

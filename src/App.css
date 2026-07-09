@@ -375,13 +375,35 @@ html.dark .movie-card:hover {
 }
 
 .search-drop-link {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
   text-decoration: none;
   color: #111827;
 }
 
 .search-drop-link:hover {
   background: #f3f4f6;
+}
+
+.search-drop-poster {
+  width: 36px;
+  height: 54px;
+  object-fit: cover;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.search-drop-link span {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.search-drop-link small {
+  color: #6b7280;
+  font-size: 0.8rem;
 }
 
 html.dark .search-dropdown {
@@ -392,6 +414,10 @@ html.dark .search-dropdown {
 html.dark .search-drop-item,
 html.dark .search-drop-link {
   color: #e2e8f0;
+}
+
+html.dark .search-drop-link small {
+  color: #94a3b8;
 }
 
 html.dark .search-drop-link:hover {
