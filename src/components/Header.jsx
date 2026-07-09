@@ -36,9 +36,6 @@ export default function Header() {
               Search
             </button>
           </form>
-          <Link to="/search" className="link-button">
-            Advanced Search
-          </Link>
           <button
             type="button"
             onClick={() => setTheme((t) => (t === 'dark' ? 'light' : 'dark'))}
